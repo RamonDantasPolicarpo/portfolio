@@ -230,31 +230,37 @@
                     <li class="projeto revelar">
                         <button class="projeto__corpo" type="button" data-projeto="ponto-notes">
                             <span class="projeto__topo">
-                                <span class="projeto__categoria">Full-stack · Estudo</span>
+                                <span class="projeto__categoria">To-do · Primeiro projeto</span>
                                 <span class="projeto__periodo">2026</span>
                             </span>
 
                             <span class="projeto__titulo">Ponto-Notes</span>
 
                             <span class="projeto__resumo">
-                                Projeto pessoal para atravessar a stack inteira de ponta a ponta: modelagem
-                                do banco, API em Spring Boot e um front consumindo ela.
+                                Lista de tarefas. Meu primeiro projeto de ponta a ponta: modelar o banco,
+                                subir a API e consumir ela do front para entender o ciclo inteiro.
                             </span>
 
-                            <!-- Palco: as três camadas acendem descendo (requisição) e voltam subindo
-                                 (resposta). O --r é o índice invertido, usado na volta. -->
-                            <span class="palco palco--camadas" aria-hidden="true">
-                                <span class="camada" style="--i: 0; --r: 2">
-                                    <span class="camada__nome">front</span>
-                                    <span class="camada__tec">html · css · js</span>
+                            <!-- Palco: as tarefas passam de pendente para concluída, em sequência. -->
+                            <span class="palco palco--tarefas" aria-hidden="true">
+                                <span class="tarefa" style="--i: 0">
+                                    <span class="tarefa__caixa"><span class="tarefa__marca">&times;</span></span>
+                                    <span class="tarefa__texto">modelar o banco<span
+                                            class="tarefa__risco"></span></span>
                                 </span>
-                                <span class="camada" style="--i: 1; --r: 1">
-                                    <span class="camada__nome">api</span>
-                                    <span class="camada__tec">spring boot</span>
+                                <span class="tarefa" style="--i: 1">
+                                    <span class="tarefa__caixa"><span class="tarefa__marca">&times;</span></span>
+                                    <span class="tarefa__texto">subir a API<span class="tarefa__risco"></span></span>
                                 </span>
-                                <span class="camada" style="--i: 2; --r: 0">
-                                    <span class="camada__nome">banco</span>
-                                    <span class="camada__tec">postgresql</span>
+                                <span class="tarefa" style="--i: 2">
+                                    <span class="tarefa__caixa"><span class="tarefa__marca">&times;</span></span>
+                                    <span class="tarefa__texto">consumir no front<span
+                                            class="tarefa__risco"></span></span>
+                                </span>
+                                <span class="tarefa" style="--i: 3">
+                                    <span class="tarefa__caixa"><span class="tarefa__marca">&times;</span></span>
+                                    <span class="tarefa__texto">persistir os dados<span
+                                            class="tarefa__risco"></span></span>
                                 </span>
                             </span>
 

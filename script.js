@@ -112,26 +112,33 @@
         },
 
         'ponto-notes': {
-            categoria: 'Full-stack · Estudo',
+            categoria: 'To-do · Primeiro projeto',
             titulo: 'Ponto-Notes',
             repo: 'https://github.com/RamonDantasPolicarpo/ponto-notes-api',
             video: null, // TROQUE POR: 'assets/video/ponto-notes.mp4'
             texto: [
                 '## Problema',
-                'Esse não resolve a dor de um cliente, resolve a minha. Eu sabia me virar no back-end',
-                'e queria entender a stack inteira, então montei um projeto que me obrigasse a passar',
-                'por modelagem de banco, API e um front consumindo essa API de verdade.',
+                'Esse não resolve a dor de um cliente, resolve a minha. É uma lista de tarefas —',
+                'domínio simples de propósito, porque o objetivo não era o domínio. Foi o primeiro',
+                'projeto em que percorri o ciclo inteiro, e eu queria um escopo pequeno o bastante',
+                'para que a dificuldade fosse entender a stack, não entender o negócio.',
                 '',
                 '## Decisões técnicas',
                 '- Três camadas explícitas: **PostgreSQL**, uma **API REST em Spring Boot** e um front estático em HTML, CSS e JavaScript servido pela própria aplicação.',
-                '- **Java 21 com Spring Boot 4.0.1**, Spring Data JPA e Lombok para cortar boilerplate.',
-                '- **Docker Compose** sobe o Postgres, compila a aplicação e inicializa o schema por script SQL — clonar e rodar com um comando.',
-                '- **Swagger** para documentação interativa, o que também serviu para eu testar a API antes do front existir.',
+                '- **Java 21 com Spring Boot 4.0.1**, Spring Data JPA e **Lombok** — foi aqui que usei Lombok pela primeira vez, e a diferença na quantidade de código repetido foi o que me convenceu.',
+                '- **Docker Compose** sobe o Postgres, compila a aplicação e inicializa o schema por script SQL: clonar e rodar com um comando.',
+                '- **Swagger** para documentação interativa, o que também me deixou testar a API antes de existir front.',
                 '',
-                '## Resultado',
-                '[PREENCHER] O que você entendeu de fato atravessando as três camadas — e o que',
-                'faria diferente hoje. Vale dizer também que este projeto ainda não tem testes',
-                'automatizados, se for verdade: honestidade sobre o próprio código pega bem.'
+                '## O que eu tirei daqui',
+                'Antes disso eu enxergava back-end como uma coisa só. Foi neste projeto que entendi',
+                'o que cada camada realmente faz, e principalmente **como uma API é consumida do outro',
+                'lado** — escrever o JavaScript que chama o endpoint que eu mesmo tinha escrito mudou',
+                'a forma como eu penso o contrato da API até hoje.',
+                '',
+                '## Honestidade sobre o estado',
+                'Este projeto **não tem testes automatizados**. É um projeto de aprendizado de 2026 e',
+                'está aqui pelo que ensinou, não como vitrine de qualidade — quem quiser ver o meu',
+                'trabalho com testes deve olhar o Apoli.'
             ].join('\n')
         },
 

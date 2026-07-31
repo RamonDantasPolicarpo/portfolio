@@ -12,7 +12,7 @@
       8. Projetos — o card
       9. Projetos — palco 1: PDF de apólice
      10. Projetos — palco 2: terminal
-     11. Projetos — palco 3: camadas da stack
+     11. Projetos — palco 3: tarefas
      11-B. Projetos — palco 4: classificação do descarte
      12. Rodapé
      13. Modal do estudo de caso
@@ -645,44 +645,76 @@ a.projeto__repo:hover { color: var(--cor-tinta); }
 
 
 /* ------------------------------------------------------------------ *
-   11. PALCO 3 — CAMADAS DA STACK
-   A requisição desce pelas três camadas e a resposta volta subindo.
-
-   Cada camada tem DUAS animações do mesmo pulso: a primeira usa --i
-   (ordem de descida), a segunda usa --r (o índice invertido, ordem de
-   subida). Quando duas animações mexem na mesma propriedade, vale a
-   última da lista enquanto ela estiver rodando — é o que faz a volta
-   sobrescrever a ida sem precisar de keyframe própria por camada.
+   11. PALCO 3 — TAREFAS
+   Cada item passa de pendente para concluído: a marca aparece na caixa,
+   o risco atravessa o texto e a cor esmaece. Em sequência.
  * ------------------------------------------------------------------ */
-.palco--camadas {
+.palco--tarefas {
   justify-content: center;
-  gap: 0.25rem;
+  gap: 0.3rem;
 }
 
-.camada {
+.tarefa {
   display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: var(--espaco-2);
-  padding: 0.3rem 0.45rem;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.tarefa__caixa {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 0.8rem;
+  height: 0.8rem;
   border: 1px solid var(--cor-linha);
+  color: var(--cor-texto-3);
+  font-size: 0.625rem;
+  line-height: 1;
+}
+
+/* Estado parado: tudo concluído. */
+.tarefa__texto {
+  position: relative;
   color: var(--cor-texto-4);
   letter-spacing: 0.02em;
 }
 
-.camada__nome { text-transform: uppercase; letter-spacing: 0.1em; }
-.camada__tec { color: var(--cor-texto-4); }
-
-.projeto.is-ativo .camada {
-  animation:
-    camada-pulso 280ms var(--curva-entrada) calc(var(--i) * 170ms) both,
-    camada-pulso 280ms var(--curva-entrada) calc(760ms + var(--r) * 170ms);
+/* O risco é uma linha própria, porque text-decoration não anima. */
+.tarefa__risco {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 100%;
+  height: 1px;
+  background: var(--cor-texto-4);
 }
 
-@keyframes camada-pulso {
-  0%   { border-color: var(--cor-linha);   color: var(--cor-texto-4); }
-  45%  { border-color: var(--cor-texto-3); color: var(--cor-texto-2); }
-  100% { border-color: var(--cor-linha);   color: var(--cor-texto-4); }
+.projeto.is-ativo .tarefa__marca {
+  animation: marca-entrar 180ms var(--curva-entrada) both;
+  animation-delay: calc(var(--i) * 180ms);
+}
+.projeto.is-ativo .tarefa__risco {
+  animation: risco-atravessar 240ms var(--curva-entrada) both;
+  animation-delay: calc(var(--i) * 180ms + 60ms);
+}
+.projeto.is-ativo .tarefa__texto {
+  animation: texto-esmaecer 240ms var(--curva-micro) both;
+  animation-delay: calc(var(--i) * 180ms + 60ms);
+}
+
+@keyframes marca-entrar {
+  from { opacity: 0; transform: scale(0.5); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes risco-atravessar {
+  from { width: 0; }
+  to   { width: 100%; }
+}
+
+@keyframes texto-esmaecer {
+  from { color: var(--cor-texto-2); }
+  to   { color: var(--cor-texto-4); }
 }
 
 
