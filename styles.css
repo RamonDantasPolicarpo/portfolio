@@ -1,0 +1,955 @@
+/* =========================================================================
+   Portfólio — Ramon Dantas Policarpo
+
+   Ordem do arquivo (mantenha assim para facilitar a revisão):
+      1. Tokens
+      2. Reset e base
+      3. Acessibilidade
+      4. Layout das seções
+      5. Hero
+      6. Pipeline do hero (animação ambiente)
+      7. Tecnologias
+      8. Projetos — o card
+      9. Projetos — palco 1: PDF de apólice
+     10. Projetos — palco 2: terminal
+     11. Projetos — palco 3: camadas da stack
+     11-B. Projetos — palco 4: classificação do descarte
+     12. Rodapé
+     13. Modal do estudo de caso
+     14. Revelar ao rolar
+     15. Responsivo
+     16. Movimento reduzido
+
+   Duas regras de manutenção:
+   - Quase tudo usa seletor de uma classe só. Se precisar sobrescrever,
+     prefira editar a regra existente a empilhar outra — assim nada cancela
+     nada por especificidade.
+   - Nos palcos, o estado PARADO é o quadro final da animação. A animação só
+     existe dentro de `.projeto.is-ativo`, então tirar o mouse remove a
+     animação e o card volta sozinho ao lugar, sem piscar e sem timer.
+   ========================================================================= */
+
+
+/* ------------------------------------------------------------------ *
+   1. TOKENS
+   Trocar a identidade visual do site deve ser possível editando só aqui.
+ * ------------------------------------------------------------------ */
+:root {
+  /* Avisa o navegador que o tema é escuro (barra de rolagem, campos). */
+  color-scheme: dark;
+
+  /* Cor — preto, branco e cinzas. Sem cor de destaque.
+     O tema escuro é o padrão; o claro está logo abaixo, no bloco de
+     prefers-color-scheme, e é a inversão exata destes valores. */
+  --cor-fundo: #0f0f0f;
+  --cor-fundo-2: #171717;   /* preenchimento discreto (hover de card) */
+  --cor-tinta: #f2f2f2;     /* texto principal */
+  --cor-texto-2: #c2c2c2;   /* texto secundário */
+  --cor-texto-3: #8a8a8a;   /* rótulos, apoio */
+  --cor-texto-4: #5c5c5c;   /* dados dos palcos, o tom mais discreto */
+  --cor-linha: #2b2b2b;     /* hairline, bordas */
+  --cor-veu: rgba(0, 0, 0, 0.72);  /* fundo atrás do modal */
+
+  /* Tipografia */
+  --fonte-corpo: 'Inter', system-ui, -apple-system, sans-serif;
+  --fonte-mono: 'JetBrains Mono', ui-monospace, 'Courier New', monospace;
+
+  /* Escala de tamanhos.
+     Razão de ~1.15 entre os passos. O corpo fica em 16px e o mono em 12px:
+     encolher o texto de leitura junto com os títulos não deixaria a página
+     mais densa, deixaria mais difícil de ler. */
+  --passo-nome: clamp(1.875rem, 4.5vw, 3rem);   /* nome no hero */
+  --passo-micro: 0.6875rem;                      /* dados dos palcos */
+  --passo-mono: 0.75rem;                         /* rótulos em mono */
+  --passo-0: 1rem;                               /* corpo */
+  --passo-1: 1.0625rem;                          /* corpo grande */
+  --passo-2: 1.0625rem;                          /* título de card */
+  --passo-3: clamp(1.375rem, 2.6vw, 1.625rem);   /* título do modal */
+
+  /* Espaçamento — os passos grandes encolheram ~15% nesta iteração. */
+  --espaco-1: 0.5rem;
+  --espaco-2: 0.75rem;
+  --espaco-3: 1rem;
+  --espaco-4: 1.25rem;
+  --espaco-5: 1.75rem;
+  --espaco-6: 2.5rem;
+  --espaco-7: 3rem;
+  --espaco-8: 4.25rem;
+
+  /* Layout */
+  --largura-max: 68rem;
+  --margem-lateral: clamp(1.25rem, 5vw, 3rem);
+  --calha: 8rem;            /* coluna dos rótulos de seção, à esquerda */
+
+  /* Movimento.
+     --curva-entrada: sai rápido e assenta devagar. Para coisas que chegam.
+     --curva-micro:   simétrica e curta. Para hover e troca de cor. */
+  --curva-entrada: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --curva-micro: cubic-bezier(0.4, 0, 0.2, 1);
+
+  --duracao-reveal: 420ms;
+  --duracao-hover: 220ms;
+  --stagger: 55ms;
+}
+
+/*
+   Tema claro: entra só para quem configurou "claro" no sistema. São os
+   mesmos tons do currículo, invertidos. Nenhuma outra regra do arquivo
+   precisa saber qual tema está ativo — todas usam as variáveis acima.
+*/
+@media (prefers-color-scheme: light) {
+  :root {
+    color-scheme: light;
+
+    --cor-fundo: #ffffff;
+    --cor-fundo-2: #fafafa;
+    --cor-tinta: #111111;
+    --cor-texto-2: #333333;
+    --cor-texto-3: #6b6b6b;
+    --cor-texto-4: #9a9a9a;
+    --cor-linha: #e3e3e3;
+    --cor-veu: rgba(17, 17, 17, 0.55);
+  }
+}
+
+
+/* ------------------------------------------------------------------ *
+   2. RESET E BASE
+ * ------------------------------------------------------------------ */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+body,
+h1, h2, h3, p, ul, dl, dd, figure { margin: 0; }
+
+ul { padding: 0; list-style: none; }
+
+img, video { display: block; max-width: 100%; height: auto; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--cor-fundo);
+  color: var(--cor-tinta);
+  font-family: var(--fonte-corpo);
+  font-size: var(--passo-0);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Texto de leitura. */
+.texto-grande {
+  max-width: 44ch;
+  color: var(--cor-texto-2);
+  font-size: var(--passo-1);
+  line-height: 1.65;
+}
+.texto-grande + .texto-grande { margin-top: var(--espaco-3); }
+
+
+/* ------------------------------------------------------------------ *
+   3. ACESSIBILIDADE
+ * ------------------------------------------------------------------ */
+
+/* Link de pular conteúdo: escondido até receber foco pelo teclado. */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  z-index: 10;
+  padding: var(--espaco-2) var(--espaco-3);
+  background: var(--cor-tinta);
+  color: var(--cor-fundo);
+  font-family: var(--fonte-mono);
+  font-size: var(--passo-mono);
+  text-decoration: none;
+}
+.skip-link:focus {
+  left: var(--espaco-3);
+  top: var(--espaco-3);
+}
+
+/* Foco visível em tudo que é focável — não remover. */
+:focus-visible {
+  outline: 2px solid var(--cor-tinta);
+  outline-offset: 3px;
+}
+
+
+/* ------------------------------------------------------------------ *
+   4. LAYOUT DAS SEÇÕES
+   Cada seção é uma grade de duas colunas: o rótulo em mono vive na calha
+   à esquerda, como anotação de desenho técnico; o conteúdo à direita.
+   A hairline no topo dá o ritmo da página.
+ * ------------------------------------------------------------------ */
+.pagina,
+.rodape {
+  max-width: var(--largura-max);
+  margin-inline: auto;
+  padding-inline: var(--margem-lateral);
+}
+
+.secao {
+  display: grid;
+  grid-template-columns: var(--calha) 1fr;
+  gap: 0 var(--espaco-6);
+  padding-block: var(--espaco-8);
+  border-top: 1px solid var(--cor-linha);
+}
+
+/* Rótulo da seção: mono, maiúsculo, espaçado. Alinha com a 1ª linha do texto. */
+.secao__rotulo {
+  color: var(--cor-texto-3);
+  font-family: var(--fonte-mono);
+  font-size: var(--passo-mono);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  line-height: 1.9;
+}
+
+
+/* ------------------------------------------------------------------ *
+   5. HERO
+ * ------------------------------------------------------------------ */
+.hero {
+  padding-block: clamp(var(--espaco-6), 9vh, 5rem) var(--espaco-8);
+}
+
+.hero__nome {
+  font-size: var(--passo-nome);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1.06;
+  /* O efeito de embaralhar troca letras: sem isso a seleção pisca. */
+  cursor: default;
+}
+
+.hero__cargo {
+  margin-top: var(--espaco-2);
+  color: var(--cor-tinta);
+  font-family: var(--fonte-mono);
+  font-size: var(--passo-mono);
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.hero__meta {
+  margin-top: var(--espaco-4);
+  color: var(--cor-texto-3);
+  font-family: var(--fonte-mono);
+  font-size: var(--passo-mono);
+  letter-spacing: 0.08em;
+}
+
+
+/* ------------------------------------------------------------------ *
+   6. PIPELINE DO HERO
+   Os estágios acendem em sequência, ficam acesos, apagam na mesma ordem
+   e o conjunto respira apagado antes de recomeçar.
+
+   O ciclo dura 6s. Cada filho tem o mesmo ciclo, com atraso de --i * 420ms,
+   o que produz a sequência sem precisar de uma keyframe por estágio.
+ * ------------------------------------------------------------------ */
+.pipeline {
+  margin-top: var(--espaco-5);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 var(--espaco-2);
+  color: var(--cor-texto-3);
+  font-family: var(--fonte-mono);
+  font-size: var(--passo-mono);
+  letter-spacing: 0.02em;
+  /* Decoração: não deve capturar seleção nem clique. */
+  user-select: none;
+}
+
+.pipeline__etapa,
+.pipeline__seta {
+  animation: pipeline-acender 6s var(--curva-entrada) infinite;
+  animation-delay: calc(var(--i) * 260ms);
+}
+
+.pipeline__seta { color: var(--cor-texto-4); }
+
+/* O último estágio é o resultado: fica no tom mais claro quando aceso. */
+.pipeline__etapa:last-of-type { color: var(--cor-texto-2); }
+
+@keyframes pipeline-acender {
+  0%   { opacity: 0.22; transform: translateY(2px); }
+  6%   { opacity: 1;    transform: translateY(0); }
+  46%  { opacity: 1;    transform: translateY(0); }
+  56%  { opacity: 0.22; transform: translateY(0); }
+  100% { opacity: 0.22; transform: translateY(0); }
+}
+
+/* Fora da tela a animação para — não gasta bateria à toa. */
+.pipeline.is-pausado .pipeline__etapa,
+.pipeline.is-pausado .pipeline__seta { animation-play-state: paused; }
+
+
+/* ------------------------------------------------------------------ *
+   7. TECNOLOGIAS
+   Texto agrupado, não grade de logos. Cada grupo é rótulo + itens.
+ * ------------------------------------------------------------------ */
+.tecnologias__grupo {
+  display: grid;
+  grid-template-columns: 6.5rem 1fr;
+  gap: var(--espaco-4);
+  padding-block: var(--espaco-2);
+  border-top: 1px solid var(--cor-linha);
+}
+.tecnologias__grupo:first-child { border-top: 0; padding-top: 0; }
+
+.tecnologias__rotulo {
+  color: var(--cor-texto-3);
+  font-family: var(--fonte-mono);
+  font-size: var(--passo-mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  line-height: 1.9;
+}
+
+.tecnologias__itens {
+  color: var(--cor-texto-2);
+  font-size: var(--passo-1);
+}
+
+
+/* ------------------------------------------------------------------ *
+   8. PROJETOS — O CARD
+   Grade de três colunas. O card inteiro é um botão.
+ * ------------------------------------------------------------------ */
+/* Quatro projetos: 2x2. Em três colunas sobraria um card órfão na segunda
+   linha, e os palcos ficam melhores com o card mais largo. */
+.projetos {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--espaco-2);
+}
+
+.projeto {
+  /* Zera a aparência de botão do navegador. */
+  appearance: none;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: var(--espaco-4);
+  background: var(--cor-fundo);
+  border: 1px solid var(--cor-linha);
+  border-radius: 0;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-3);
+
+  transition:
+    border-color var(--duracao-hover) var(--curva-micro),
+    background-color var(--duracao-hover) var(--curva-micro),
+    transform var(--duracao-hover) var(--curva-micro);
+}
+
+/* Micro-reação: a borda acende e o card sobe 2px. O resto é o palco. */
+.projeto:hover,
+.projeto:focus-visible {
+  background: var(--cor-fundo-2);
+  border-color: var(--cor-texto-3);
+  transform: translateY(-2px);
+}
+
+.projeto__topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--espaco-2);
+  color: var(--cor-texto-3);
+  font-family: var(--fonte-mono);
+  font-size: var(--passo-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.projeto__periodo { white-space: nowrap; }
+
+.projeto__titulo {
+  font-size: var(--passo-2);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+}
+
+.projeto__resumo {
+  color: var(--cor-texto-2);
+  font-size: 0.875rem;
+  line-height: 1.55;
+}
+
+/* "Ver estudo de caso" fica colado no rodapé do card. */
+.projeto__acao {
+  margin-top: auto;
+  color: var(--cor-texto-3);
+  font-family: var(--fonte-mono);
+  font-size: var(--passo-mono);
+  letter-spacing: 0.08em;
+  transition: color var(--duracao-hover) var(--curva-micro);
+}
+.projeto:hover .projeto__acao,
+.projeto:focus-visible .projeto__acao { color: var(--cor-tinta); }
+
+
+/* ---- O palco (base comum aos três) ---- */
+.palco {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-1);
+  min-height: 6.75rem;
+  padding-top: var(--espaco-3);
+  border-top: 1px solid var(--cor-linha);
+  font-family: var(--fonte-mono);
+  font-size: var(--passo-micro);
+  line-height: 1.5;
+  color: var(--cor-texto-4);
+  /* Nenhum desenho pode vazar do card. */
+  overflow: hidden;
+}
+
+
+/* ------------------------------------------------------------------ *
+   9. PALCO 1 — PDF DE APÓLICE
+   Uma barra varre a página, as linhas acendem na passagem, os campos
+   extraídos entram um a um e o tenant de destino acende no fim.
+ * ------------------------------------------------------------------ */
+.palco--pdf {
+  display: grid;
+  grid-template-columns: 4.5rem 1fr;
+  grid-template-rows: auto auto;
+  gap: var(--espaco-2) var(--espaco-3);
+  align-items: start;
+}
+
+/* --- a "página" --- */
+.pdf {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding: 0.4rem;
+  border: 1px solid var(--cor-linha);
+  overflow: hidden;
+}
+
+.pdf__rotulo {
+  margin-bottom: 0.15rem;
+  color: var(--cor-texto-4);
+  font-size: 0.625rem;
+  letter-spacing: 0.04em;
+}
+
+/* Cada "linha de texto" do PDF é um traço. As duas últimas são mais curtas,
+   pra não virar um bloco perfeito demais. Os índices contam o rótulo, que é
+   o primeiro filho. */
+.pdf__linha {
+  height: 1px;
+  background: var(--cor-linha);
+  opacity: 0.9;
+}
+.pdf__linha:nth-child(4) { width: 72%; }
+.pdf__linha:nth-child(5) { width: 45%; }
+
+/* A barra de varredura só existe durante a animação.
+   Ela desce animando `top` em porcentagem, que é relativa à altura da
+   página — assim o percurso continua certo se você mudar o número de linhas. */
+.pdf__varredura {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 1px;
+  background: var(--cor-tinta);
+  opacity: 0;
+}
+
+/* --- os campos extraídos --- */
+.campos {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25rem;
+}
+
+.campo {
+  padding: 0.1rem 0.4rem;
+  border: 1px solid var(--cor-linha);
+  color: var(--cor-texto-3);
+  letter-spacing: 0.02em;
+}
+
+/* --- o tenant de destino --- */
+.tenant {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--cor-texto-4);
+  letter-spacing: 0.06em;
+}
+
+.tenant__ponto {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--cor-texto-3);
+}
+
+/* --- a animação, só quando o card está ativo --- */
+.projeto.is-ativo .pdf__varredura {
+  animation: pdf-varrer 620ms var(--curva-micro) both;
+}
+.projeto.is-ativo .pdf__linha {
+  animation: pdf-linha 420ms var(--curva-entrada) both;
+  animation-delay: calc(var(--l) * 90ms);
+}
+.projeto.is-ativo .campo {
+  animation: campo-entrar 260ms var(--curva-entrada) both;
+  animation-delay: calc(420ms + var(--i) * 130ms);
+}
+.projeto.is-ativo .tenant__ponto {
+  animation: ponto-acender 300ms var(--curva-entrada) 900ms both;
+}
+
+@keyframes pdf-varrer {
+  0%   { opacity: 0;    top: 0; }
+  15%  { opacity: 0.85; }
+  85%  { opacity: 0.85; }
+  100% { opacity: 0;    top: 100%; }
+}
+
+@keyframes pdf-linha {
+  0%   { opacity: 0.9; background: var(--cor-linha); }
+  40%  { opacity: 1;   background: var(--cor-texto-3); }
+  100% { opacity: 0.9; background: var(--cor-linha); }
+}
+
+@keyframes campo-entrar {
+  from { opacity: 0; transform: translateX(-6px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes ponto-acender {
+  from { opacity: 0; transform: scale(0.4); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+
+/* ------------------------------------------------------------------ *
+   10. PALCO 2 — TERMINAL
+   A requisição é datilografada (largura animada em passos: em fonte
+   monoespaçada, 1 passo = 1 caractere) e a resposta cai linha a linha.
+ * ------------------------------------------------------------------ */
+.palco--terminal { gap: 0.2rem; }
+
+.term__requisicao {
+  /* 16 caracteres: "GET /produtos/42". Se mudar o texto, mude o 16 aqui
+     e o steps(16) na animação. */
+  width: 16ch;
+  overflow: hidden;
+  white-space: nowrap;
+  border-right: 1px solid var(--cor-texto-4);
+  color: var(--cor-texto-2);
+  letter-spacing: 0.02em;
+}
+
+.term__linha {
+  white-space: pre;
+  color: var(--cor-texto-4);
+}
+
+.term__status {
+  margin-top: 0.15rem;
+  color: var(--cor-texto-3);
+  letter-spacing: 0.08em;
+}
+
+.projeto.is-ativo .term__requisicao {
+  animation:
+    term-digitar 520ms steps(16, end) both,
+    term-cursor 420ms steps(2, end) 3;
+}
+.projeto.is-ativo .term__linha {
+  animation: term-linha 200ms var(--curva-entrada) both;
+  animation-delay: calc(560ms + var(--i) * 120ms);
+}
+.projeto.is-ativo .term__status {
+  animation: term-linha 240ms var(--curva-entrada) 950ms both;
+}
+
+@keyframes term-digitar {
+  from { width: 0; }
+  to   { width: 16ch; }
+}
+
+@keyframes term-cursor {
+  0%, 100% { border-right-color: var(--cor-texto-4); }
+  50%      { border-right-color: transparent; }
+}
+
+@keyframes term-linha {
+  from { opacity: 0; transform: translateY(3px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+
+/* ------------------------------------------------------------------ *
+   11. PALCO 3 — CAMADAS DA STACK
+   A requisição desce pelas três camadas e a resposta volta subindo.
+
+   Cada camada tem DUAS animações do mesmo pulso: a primeira usa --i
+   (ordem de descida), a segunda usa --r (o índice invertido, ordem de
+   subida). Quando duas animações mexem na mesma propriedade, vale a
+   última da lista enquanto ela estiver rodando — é o que faz a volta
+   sobrescrever a ida sem precisar de keyframe própria por camada.
+ * ------------------------------------------------------------------ */
+.palco--camadas {
+  justify-content: center;
+  gap: 0.25rem;
+}
+
+.camada {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--espaco-2);
+  padding: 0.3rem 0.45rem;
+  border: 1px solid var(--cor-linha);
+  color: var(--cor-texto-4);
+  letter-spacing: 0.02em;
+}
+
+.camada__nome { text-transform: uppercase; letter-spacing: 0.1em; }
+.camada__tec { color: var(--cor-texto-4); }
+
+.projeto.is-ativo .camada {
+  animation:
+    camada-pulso 280ms var(--curva-entrada) calc(var(--i) * 170ms) both,
+    camada-pulso 280ms var(--curva-entrada) calc(760ms + var(--r) * 170ms);
+}
+
+@keyframes camada-pulso {
+  0%   { border-color: var(--cor-linha);   color: var(--cor-texto-4); }
+  45%  { border-color: var(--cor-texto-3); color: var(--cor-texto-2); }
+  100% { border-color: var(--cor-linha);   color: var(--cor-texto-4); }
+}
+
+
+/* ------------------------------------------------------------------ *
+   11-B. PALCO 4 — CLASSIFICAÇÃO DO DESCARTE
+   O texto do usuário é digitado, as três classes entram e a escolhida
+   acende no fim.
+ * ------------------------------------------------------------------ */
+.palco--eco { gap: var(--espaco-2); }
+
+.eco__entrada {
+  /* 19 caracteres: "> pilha de controle". Se mudar o texto, mude o 19
+     aqui e o steps(19) na animação. */
+  width: 19ch;
+  overflow: hidden;
+  white-space: nowrap;
+  border-right: 1px solid var(--cor-texto-4);
+  color: var(--cor-texto-2);
+}
+
+.eco__classes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+
+.eco__classe {
+  padding: 0.1rem 0.4rem;
+  border: 1px solid var(--cor-linha);
+  color: var(--cor-texto-4);
+}
+
+/* A classe escolhida pela IA fica marcada mesmo com o card parado. */
+.eco__classe--eleita {
+  border-color: var(--cor-texto-3);
+  color: var(--cor-tinta);
+}
+
+.eco__destino {
+  margin-top: auto;
+  color: var(--cor-texto-4);
+  letter-spacing: 0.04em;
+}
+
+.projeto.is-ativo .eco__entrada {
+  animation:
+    eco-digitar 560ms steps(19, end) both,
+    term-cursor 420ms steps(2, end) 3;
+}
+.projeto.is-ativo .eco__classe {
+  animation: campo-entrar 240ms var(--curva-entrada) both;
+  animation-delay: calc(620ms + var(--i) * 120ms);
+}
+/* A eleita entra junto das outras e só depois acende. */
+.projeto.is-ativo .eco__classe--eleita {
+  animation:
+    campo-entrar 240ms var(--curva-entrada) calc(620ms + var(--i) * 120ms) both,
+    eco-eleger 300ms var(--curva-entrada) 1020ms both;
+}
+.projeto.is-ativo .eco__destino {
+  animation: term-linha 240ms var(--curva-entrada) 1240ms both;
+}
+
+@keyframes eco-digitar {
+  from { width: 0; }
+  to   { width: 19ch; }
+}
+
+@keyframes eco-eleger {
+  from { border-color: var(--cor-linha);   color: var(--cor-texto-4); }
+  to   { border-color: var(--cor-texto-3); color: var(--cor-tinta); }
+}
+
+
+/* ------------------------------------------------------------------ *
+   12. RODAPÉ
+ * ------------------------------------------------------------------ */
+.rodape {
+  display: grid;
+  grid-template-columns: var(--calha) 1fr;
+  gap: 0 var(--espaco-6);
+  padding-block: var(--espaco-7) var(--espaco-8);
+  border-top: 1px solid var(--cor-linha);
+}
+
+.rodape__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espaco-2) var(--espaco-5);
+}
+
+.rodape__link {
+  color: var(--cor-texto-2);
+  font-family: var(--fonte-mono);
+  font-size: var(--passo-mono);
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  border-bottom: 1px solid var(--cor-linha);
+  padding-bottom: 2px;
+  transition:
+    color var(--duracao-hover) var(--curva-micro),
+    border-color var(--duracao-hover) var(--curva-micro);
+}
+.rodape__link:hover {
+  color: var(--cor-tinta);
+  border-color: var(--cor-tinta);
+}
+
+
+/* ------------------------------------------------------------------ *
+   13. MODAL DO ESTUDO DE CASO
+ * ------------------------------------------------------------------ */
+.caso {
+  width: min(44rem, calc(100vw - 2rem));
+  max-height: 88vh;
+  margin: auto;
+  padding: var(--espaco-6);
+  background: var(--cor-fundo);
+  border: 1px solid var(--cor-linha);
+  border-radius: 0;
+  color: var(--cor-tinta);
+  overflow-y: auto;
+}
+.caso::backdrop { background: var(--cor-veu); }
+
+.caso[open] { animation: caso-entrar 260ms var(--curva-entrada); }
+
+@keyframes caso-entrar {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.caso__cabecalho {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--espaco-3);
+  padding-bottom: var(--espaco-3);
+  border-bottom: 1px solid var(--cor-linha);
+}
+
+.caso__categoria {
+  color: var(--cor-texto-3);
+  font-family: var(--fonte-mono);
+  font-size: var(--passo-mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.caso__fechar {
+  appearance: none;
+  padding: var(--espaco-1) var(--espaco-2);
+  background: none;
+  border: 1px solid var(--cor-linha);
+  border-radius: 0;
+  color: var(--cor-texto-2);
+  font-family: var(--fonte-mono);
+  font-size: var(--passo-mono);
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition:
+    color var(--duracao-hover) var(--curva-micro),
+    border-color var(--duracao-hover) var(--curva-micro);
+}
+.caso__fechar:hover {
+  color: var(--cor-tinta);
+  border-color: var(--cor-tinta);
+}
+
+.caso__titulo {
+  margin-top: var(--espaco-4);
+  font-size: var(--passo-3);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+.caso__midia { margin-top: var(--espaco-5); }
+
+.caso__video {
+  width: 100%;
+  border: 1px solid var(--cor-linha);
+}
+
+/* Placeholder de vídeo: mesma proporção do vídeo, sem peso visual. */
+.caso__video-pendente {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 16 / 9;
+  background: var(--cor-fundo-2);
+  border: 1px solid var(--cor-linha);
+  color: var(--cor-texto-3);
+  font-family: var(--fonte-mono);
+  font-size: var(--passo-mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* Texto do caso, vindo do markdown. */
+.caso__texto {
+  margin-top: var(--espaco-5);
+  color: var(--cor-texto-2);
+  font-size: var(--passo-0);
+}
+.caso__texto h3 {
+  margin-top: var(--espaco-5);
+  color: var(--cor-texto-3);
+  font-family: var(--fonte-mono);
+  font-size: var(--passo-mono);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.caso__texto p { margin-top: var(--espaco-2); }
+.caso__texto ul { margin-top: var(--espaco-2); }
+.caso__texto li {
+  position: relative;
+  padding-left: var(--espaco-4);
+  margin-top: var(--espaco-1);
+}
+.caso__texto li::before {
+  content: "—";
+  position: absolute;
+  left: 0;
+  color: var(--cor-texto-3);
+}
+.caso__texto strong { color: var(--cor-tinta); font-weight: 600; }
+.caso__texto code {
+  padding: 0.1em 0.35em;
+  background: var(--cor-fundo-2);
+  border: 1px solid var(--cor-linha);
+  font-family: var(--fonte-mono);
+  font-size: 0.875em;
+}
+
+/* Trava a rolagem do fundo enquanto o modal está aberto (posto pelo script). */
+.sem-rolagem { overflow: hidden; }
+
+
+/* ------------------------------------------------------------------ *
+   14. REVELAR AO ROLAR
+   Fade + subida de 10px. O atraso do stagger vem do script, na --atraso.
+ * ------------------------------------------------------------------ */
+.revelar {
+  opacity: 0;
+  transform: translateY(10px);
+  transition:
+    opacity var(--duracao-reveal) var(--curva-entrada) var(--atraso, 0ms),
+    transform var(--duracao-reveal) var(--curva-entrada) var(--atraso, 0ms);
+}
+.revelar.is-visivel {
+  opacity: 1;
+  transform: none;
+}
+
+
+/* ------------------------------------------------------------------ *
+   15. RESPONSIVO
+ * ------------------------------------------------------------------ */
+
+/* Tablet: os três cards não cabem mais lado a lado. */
+@media (max-width: 58rem) {
+  .projetos { grid-template-columns: 1fr; }
+}
+
+/* Mobile: a calha some e o rótulo vira cabeçalho da seção. */
+@media (max-width: 48rem) {
+  .secao,
+  .rodape {
+    grid-template-columns: 1fr;
+    gap: var(--espaco-3);
+    padding-block: var(--espaco-7);
+  }
+
+  .tecnologias__grupo {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .caso { padding: var(--espaco-4); }
+}
+
+
+/* ------------------------------------------------------------------ *
+   16. MOVIMENTO REDUZIDO
+   Desliga tudo para quem pediu no sistema. Como o estado parado dos palcos
+   já é o quadro final, não some nenhuma informação: o desenho continua lá,
+   só não se monta na frente de quem está olhando.
+   Fica por último para vencer as regras acima.
+ * ------------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+  }
+
+  html { scroll-behavior: auto; }
+
+  .revelar {
+    opacity: 1;
+    transform: none;
+  }
+
+  .projeto:hover,
+  .projeto:focus-visible { transform: none; }
+}

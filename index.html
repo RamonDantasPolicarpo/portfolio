@@ -1,11 +1,340 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+
+    <title>Ramon Dantas Policarpo — Desenvolvedor Back-end</title>
+    <meta name="description"
+        content="Portfólio de Ramon Dantas Policarpo, desenvolvedor back-end com foco em Java e Spring Boot.">
+
+    <!-- Cor da barra do navegador no mobile, acompanhando o tema. -->
+    <meta name="theme-color" content="#0f0f0f" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+
+    <!-- Inter (corpo e nome) + JetBrains Mono (rótulos e dados) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;500&display=swap">
+
+    <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
-    
+
+    <!-- Atalho de acessibilidade: primeiro item alcançável pelo teclado. -->
+    <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+
+    <main id="conteudo" class="pagina">
+
+        <!-- ==================================================================
+         HERO
+
+         O nome tem o efeito de embaralhar no hover; o texto verdadeiro fica
+         em data-texto para o script poder restaurá-lo.
+
+         A "pipeline" abaixo é ambiente: os estágios acendem em sequência,
+         apagam e recomeçam. É decoração, por isso aria-hidden — quem usa
+         leitor de tela receberia um fragmento sem contexto. O mesmo conteúdo
+         aparece escrito na seção Sobre e no estudo de caso.
+         ================================================================== -->
+        <header class="hero">
+            <h1 class="hero__nome" id="nome" data-texto="Ramon Dantas Policarpo">Ramon Dantas Policarpo</h1>
+
+            <p class="hero__cargo">Desenvolvedor Back-end · Java / Spring Boot</p>
+
+            <p class="pipeline" id="pipeline" aria-hidden="true">
+                <span class="pipeline__etapa" style="--i: 0">GET /request</span>
+                <span class="pipeline__seta" style="--i: 1">&rarr;</span>
+                <span class="pipeline__etapa" style="--i: 2">Controller</span>
+                <span class="pipeline__seta" style="--i: 3">&rarr;</span>
+                <span class="pipeline__etapa" style="--i: 4">Service</span>
+                <span class="pipeline__seta" style="--i: 5">&rarr;</span>
+                <span class="pipeline__etapa" style="--i: 6">Repository</span>
+                <span class="pipeline__seta" style="--i: 7">&rarr;</span>
+                <span class="pipeline__etapa" style="--i: 8">DB</span>
+                <span class="pipeline__seta" style="--i: 9">&rarr;</span>
+                <span class="pipeline__etapa" style="--i: 10">200 OK</span>
+            </p>
+
+            <p class="hero__meta">Brasília, DF — Engenharia de Software, UniCEUB</p>
+        </header>
+
+
+        <!-- ==================================================================
+         SOBRE
+         ================================================================== -->
+        <section class="secao" aria-labelledby="sobre-titulo">
+            <h2 class="secao__rotulo" id="sobre-titulo">Sobre</h2>
+
+            <div class="secao__conteudo">
+                <p class="texto-grande revelar">
+                    Tenho 19 anos, moro em Brasília e curso Engenharia de Software no UniCEUB.
+                    Trabalho no back-end: APIs REST em Java e Spring Boot, com autenticação JWT,
+                    regras de negócio cobertas por testes em JUnit e entrega em Docker.
+                </p>
+                <p class="texto-grande revelar">
+                    Hoje desenvolvo o Apoli, um CRM SaaS multi-tenant para corretoras de seguros,
+                    com extração de dados de apólice em PDF por posicionamento espacial e isolamento
+                    entre corretoras coberto por testes de integração.
+                </p>
+            </div>
+        </section>
+
+
+        <!-- ==================================================================
+         TECNOLOGIAS
+         Lista de definição: o rótulo do grupo (mono) e os itens em texto.
+         Para editar, mexa só nos <dt> e <dd> abaixo.
+         ================================================================== -->
+        <section class="secao" aria-labelledby="tecnologias-titulo">
+            <h2 class="secao__rotulo" id="tecnologias-titulo">Tecnologias</h2>
+
+            <div class="secao__conteudo">
+                <dl class="tecnologias">
+                    <div class="tecnologias__grupo revelar">
+                        <dt class="tecnologias__rotulo">Back-end</dt>
+                        <dd class="tecnologias__itens">Java 21, Spring Boot, Spring Security, JPA/Hibernate, Lombok</dd>
+                    </div>
+
+                    <div class="tecnologias__grupo revelar">
+                        <dt class="tecnologias__rotulo">API</dt>
+                        <dd class="tecnologias__itens">REST, JWT com refresh token, multitenancy, OpenAPI/Swagger</dd>
+                    </div>
+
+                    <div class="tecnologias__grupo revelar">
+                        <dt class="tecnologias__rotulo">Testes</dt>
+                        <dd class="tecnologias__itens">JUnit 5, Mockito, Testcontainers</dd>
+                    </div>
+
+                    <div class="tecnologias__grupo revelar">
+                        <dt class="tecnologias__rotulo">Dados</dt>
+                        <dd class="tecnologias__itens">PostgreSQL, Flyway</dd>
+                    </div>
+
+                    <div class="tecnologias__grupo revelar">
+                        <dt class="tecnologias__rotulo">Infra</dt>
+                        <dd class="tecnologias__itens">Docker, Git, GitHub Actions, Checkstyle</dd>
+                    </div>
+
+                    <div class="tecnologias__grupo revelar">
+                        <dt class="tecnologias__rotulo">Bibliotecas</dt>
+                        <dd class="tecnologias__itens">Apache PDFBox, Spring AI</dd>
+                    </div>
+                </dl>
+            </div>
+        </section>
+
+
+        <!-- ==================================================================
+         PROJETOS
+
+         Cada card é um <button>: ganha foco de teclado e Enter/Espaço de graça.
+         O data-projeto liga o card ao estudo de caso lá no script.js.
+
+         Anatomia do card:
+           .projeto__topo    categoria e período
+           .projeto__titulo  nome do projeto
+           .projeto__resumo  duas linhas sobre o caso de uso  <- edite aqui
+           .palco            a micro-animação temática (decorativa)
+           .projeto__acao    chamada para o estudo de caso
+
+         Os palcos são desenho puro em CSS: os elementos ficam parados no
+         quadro final e só ganham animação quando o card recebe .is-ativo.
+         São decorativos, daí o aria-hidden.
+         ================================================================== -->
+        <section class="secao" aria-labelledby="projetos-titulo">
+            <h2 class="secao__rotulo" id="projetos-titulo">Projetos</h2>
+
+            <div class="secao__conteudo">
+                <ul class="projetos">
+
+                    <!-- ---------- Projeto 1: Apoli ---------- -->
+                    <li class="revelar">
+                        <button class="projeto" type="button" data-projeto="saas-apolices">
+                            <span class="projeto__topo">
+                                <span class="projeto__categoria">SaaS · Multitenant</span>
+                                <span class="projeto__periodo">2025 —</span>
+                            </span>
+
+                            <span class="projeto__titulo">Apoli</span>
+
+                            <span class="projeto__resumo">
+                                CRM para corretoras de seguros. Centraliza carteira, apólices e vigências,
+                                e extrai os dados da proposta direto do PDF, sem digitação.
+                            </span>
+
+                            <!-- Palco: PDF varrido, campos extraídos, tenant de destino. -->
+                            <span class="palco palco--pdf" aria-hidden="true">
+                                <span class="pdf">
+                                    <span class="pdf__rotulo">apolice.pdf</span>
+                                    <span class="pdf__linha" style="--l: 0"></span>
+                                    <span class="pdf__linha" style="--l: 1"></span>
+                                    <span class="pdf__linha" style="--l: 2"></span>
+                                    <span class="pdf__linha" style="--l: 3"></span>
+                                    <span class="pdf__varredura"></span>
+                                </span>
+
+                                <span class="campos">
+                                    <span class="campo" style="--i: 0">segurado</span>
+                                    <span class="campo" style="--i: 1">vigência</span>
+                                    <span class="campo" style="--i: 2">prêmio</span>
+                                </span>
+
+                                <span class="tenant">
+                                    <span class="tenant__ponto"></span>tenant_04
+                                </span>
+                            </span>
+
+                            <span class="projeto__acao">Ver estudo de caso</span>
+                        </button>
+                    </li>
+
+                    <!-- ---------- Projeto 2: ByteShop API ---------- -->
+                    <li class="revelar">
+                        <button class="projeto" type="button" data-projeto="byteshop">
+                            <span class="projeto__topo">
+                                <span class="projeto__categoria">API REST · E-commerce</span>
+                                <span class="projeto__periodo">2025 — 26</span>
+                            </span>
+
+                            <span class="projeto__titulo">ByteShop API</span>
+
+                            <span class="projeto__resumo">
+                                API de e-commerce escrita para exercitar orientação a objetos: clientes,
+                                produtos e pedidos, com as regras de negócio barrando o que não pode acontecer.
+                            </span>
+
+                            <!-- Palco: terminal. A requisição é datilografada e o JSON responde. -->
+                            <span class="palco palco--terminal" aria-hidden="true">
+                                <span class="term__requisicao">GET /produtos/42</span>
+                                <span class="term__linha" style="--i: 0">{ "id": 42,</span>
+                                <span class="term__linha" style="--i: 1">&nbsp;&nbsp;"nome": "SSD 1TB",</span>
+                                <span class="term__linha" style="--i: 2">&nbsp;&nbsp;"preco": 429.90 }</span>
+                                <span class="term__status">200 OK</span>
+                            </span>
+
+                            <span class="projeto__acao">Ver estudo de caso</span>
+                        </button>
+                    </li>
+
+                    <!-- ---------- Projeto 3: Ponto-Notes ---------- -->
+                    <li class="revelar">
+                        <button class="projeto" type="button" data-projeto="ponto-notes">
+                            <span class="projeto__topo">
+                                <span class="projeto__categoria">Full-stack · Estudo</span>
+                                <span class="projeto__periodo">2026</span>
+                            </span>
+
+                            <span class="projeto__titulo">Ponto-Notes</span>
+
+                            <span class="projeto__resumo">
+                                Projeto pessoal para atravessar a stack inteira de ponta a ponta: modelagem
+                                do banco, API em Spring Boot e um front consumindo ela.
+                            </span>
+
+                            <!-- Palco: as três camadas acendem descendo (requisição) e voltam subindo
+                                 (resposta). O --r é o índice invertido, usado na volta. -->
+                            <span class="palco palco--camadas" aria-hidden="true">
+                                <span class="camada" style="--i: 0; --r: 2">
+                                    <span class="camada__nome">front</span>
+                                    <span class="camada__tec">html · css · js</span>
+                                </span>
+                                <span class="camada" style="--i: 1; --r: 1">
+                                    <span class="camada__nome">api</span>
+                                    <span class="camada__tec">spring boot</span>
+                                </span>
+                                <span class="camada" style="--i: 2; --r: 0">
+                                    <span class="camada__nome">banco</span>
+                                    <span class="camada__tec">postgresql</span>
+                                </span>
+                            </span>
+
+                            <span class="projeto__acao">Ver estudo de caso</span>
+                        </button>
+                    </li>
+
+                    <!-- ---------- Projeto 4: EcoDescart ---------- -->
+                    <li class="revelar">
+                        <button class="projeto" type="button" data-projeto="eco-descart">
+                            <span class="projeto__topo">
+                                <span class="projeto__categoria">CLI · Spring AI</span>
+                                <span class="projeto__periodo">2026</span>
+                            </span>
+
+                            <span class="projeto__titulo">EcoDescart</span>
+
+                            <span class="projeto__resumo">
+                                Assistente de terminal que lê a descrição do lixo em texto livre, classifica
+                                o descarte e explica como embalar sem ferir quem coleta.
+                            </span>
+
+                            <!-- Palco: o texto do usuário é digitado, as três classes aparecem e a
+                                 classificação escolhida acende. -->
+                            <span class="palco palco--eco" aria-hidden="true">
+                                <span class="eco__entrada">&gt; pilha de controle</span>
+
+                                <span class="eco__classes">
+                                    <span class="eco__classe" style="--i: 0">orgânico</span>
+                                    <span class="eco__classe" style="--i: 1">reciclável</span>
+                                    <span class="eco__classe eco__classe--eleita" style="--i: 2">especial</span>
+                                </span>
+
+                                <span class="eco__destino">ponto de coleta · 70000-000</span>
+                            </span>
+
+                            <span class="projeto__acao">Ver estudo de caso</span>
+                        </button>
+                    </li>
+
+                </ul>
+            </div>
+        </section>
+
+    </main>
+
+
+    <!-- ==================================================================
+       CONTATO
+       ================================================================== -->
+    <footer class="rodape">
+        <h2 class="secao__rotulo" id="contato-titulo">Contato</h2>
+
+        <ul class="rodape__links" aria-labelledby="contato-titulo">
+            <li><a class="rodape__link" href="https://github.com/RamonDantasPolicarpo" rel="me noopener"
+                    target="_blank">GitHub</a></li>
+            <li><a class="rodape__link" href="https://linkedin.com/in/ramondantaspolicarpo" rel="me noopener"
+                    target="_blank">LinkedIn</a></li>
+            <li><a class="rodape__link" href="mailto:ramonpolicarpo36@gmail.com">ramonpolicarpo36@gmail.com</a></li>
+        </ul>
+    </footer>
+
+
+    <!-- ==================================================================
+       MODAL DO ESTUDO DE CASO
+       Um só <dialog> para os três projetos. O <dialog> nativo já cuida de
+       prender o foco e fechar no Esc — não troque por uma div.
+       O conteúdo é preenchido pelo script no clique do card.
+       ================================================================== -->
+    <dialog class="caso" id="caso" aria-labelledby="caso-titulo">
+        <div class="caso__cabecalho">
+            <p class="caso__categoria" id="caso-categoria"></p>
+            <button class="caso__fechar" type="button" id="caso-fechar"
+                aria-label="Fechar estudo de caso">Fechar</button>
+        </div>
+
+        <h2 class="caso__titulo" id="caso-titulo"></h2>
+
+        <!-- Vídeo de demonstração (ou o aviso de "em breve"). -->
+        <div class="caso__midia" id="caso-midia"></div>
+
+        <!-- Texto do caso, renderizado a partir do markdown. -->
+        <div class="caso__texto" id="caso-texto"></div>
+    </dialog>
+
+    <script src="script.js"></script>
 </body>
+
 </html>
