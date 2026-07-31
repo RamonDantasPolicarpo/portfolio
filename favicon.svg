@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Ramon Dantas Policarpo">
+  <!-- Prompt de terminal: o chevron em branco e o cursor no acento violeta.
+       Desenhado em traço grosso de propósito: a 16px o que sobra é a silhueta. -->
+  <rect width="64" height="64" rx="12" fill="#0a0a0b"/>
+  <path d="M17 20 L31 32 L17 44"
+        fill="none" stroke="#f2f2f2" stroke-width="7"
+        stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="35" y="39" width="14" height="5" rx="2.5" fill="#818cf8"/>
+</svg>

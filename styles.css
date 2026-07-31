@@ -38,7 +38,7 @@
   /* Avisa o navegador que o tema é escuro (barra de rolagem, campos). */
   color-scheme: dark;
 
-  /* Cor — preto, branco e cinzas. Sem cor de destaque.
+  /* Cor — cinzas, mais um acento violeta usado com parcimônia.
      O escuro é o padrão; o claro é a inversão exata, logo abaixo.
 
      Repare que NÃO existe @media (prefers-color-scheme) aqui. A preferência
@@ -53,6 +53,13 @@
   --cor-texto-4: #5c5c5c;   /* dados dos palcos, o tom mais discreto */
   --cor-linha: #2b2b2b;     /* hairline, bordas */
   --cor-veu: rgba(0, 0, 0, 0.72);  /* fundo atrás do modal */
+
+  /* ACENTO — violeta dessaturado. Aparece em três lugares e em nenhum outro:
+     1. o estágio que acende na pipeline do hero (e o pulso do 200 OK);
+     2. as setas dos cards, só no hover/foco;
+     3. o ponto do botão de tema.
+     A graça é a escassez. Se for aparecer num quarto lugar, tire de outro. */
+  --accent: #818cf8;
 
   /* Tipografia */
   --fonte-corpo: 'Inter', system-ui, -apple-system, sans-serif;
@@ -111,6 +118,10 @@
   --cor-texto-4: #9a9a9a;
   --cor-linha: #e3e3e3;
   --cor-veu: rgba(17, 17, 17, 0.55);
+
+  /* Mais escuro que o do tema escuro: o mesmo violeta claro sobre branco
+     ficaria ilegível. Este tem contraste de sobra para texto pequeno. */
+  --accent: #4f46e5;
 }
 
 
@@ -208,16 +219,17 @@ body {
   border-color: var(--cor-texto-3);
 }
 
-/* O ponto antes do rótulo: cheio no escuro, vazado no claro. */
+/* O ponto antes do rótulo: cheio no escuro, vazado no claro. É o único
+   elemento da página que fica no acento sem depender de hover. */
 .tema__rotulo::before {
   content: "";
   display: inline-block;
   width: 6px;
   height: 6px;
   margin-right: 0.45rem;
-  border: 1px solid currentColor;
+  border: 1px solid var(--accent);
   border-radius: 50%;
-  background: currentColor;
+  background: var(--accent);
   vertical-align: baseline;
 }
 :root[data-tema="claro"] .tema__rotulo::before { background: none; }
@@ -318,19 +330,46 @@ body {
 .pipeline__seta {
   animation: pipeline-acender 6s var(--curva-entrada) infinite;
   animation-delay: calc(var(--i) * 260ms);
+
+  /* Cor de repouso de cada tipo de estágio. A keyframe volta pra ela depois
+     do lampejo, então o acento não fica grudado em ninguém. Usar variável
+     aqui evita ter uma keyframe por tipo só pra trocar a cor final. */
+  --cor-base: var(--cor-texto-3);
 }
 
-.pipeline__seta { color: var(--cor-texto-4); }
+.pipeline__seta { --cor-base: var(--cor-texto-4); }
 
-/* O último estágio é o resultado: fica no tom mais claro quando aceso. */
-.pipeline__etapa:last-of-type { color: var(--cor-texto-2); }
+/* O último estágio é o resultado: fica no tom mais claro quando aceso, e é o
+   único que ganha o pulso — é o fim do ciclo. */
+.pipeline__etapa:last-of-type {
+  --cor-base: var(--cor-texto-2);
+  animation-name: pipeline-concluir;
+}
 
+/*
+   O acento acompanha a onda: entra no instante em que o estágio acende e sai
+   logo em seguida. Em nenhum quadro a linha inteira fica violeta — o que se
+   vê é um ponto de cor viajando da esquerda para a direita.
+*/
 @keyframes pipeline-acender {
-  0%   { opacity: 0.22; transform: translateY(2px); }
-  6%   { opacity: 1;    transform: translateY(0); }
+  0%   { opacity: 0.22; transform: translateY(2px); color: var(--cor-base); }
+  6%   { opacity: 1;    transform: translateY(0);   color: var(--accent); }
+  20%  {                                            color: var(--cor-base); }
   46%  { opacity: 1;    transform: translateY(0); }
   56%  { opacity: 0.22; transform: translateY(0); }
-  100% { opacity: 0.22; transform: translateY(0); }
+  100% { opacity: 0.22; transform: translateY(0);   color: var(--cor-base); }
+}
+
+/* Igual à de cima, mais um pulso curto de escala ao concluir. */
+@keyframes pipeline-concluir {
+  0%   { opacity: 0.22; transform: translateY(2px) scale(1);    color: var(--cor-base); }
+  6%   { opacity: 1;    transform: translateY(0) scale(1);      color: var(--accent); }
+  11%  {                transform: translateY(0) scale(1.06); }
+  18%  {                transform: translateY(0) scale(1); }
+  30%  {                                                        color: var(--cor-base); }
+  46%  { opacity: 1;    transform: translateY(0) scale(1); }
+  56%  { opacity: 0.22; transform: translateY(0) scale(1); }
+  100% { opacity: 0.22; transform: translateY(0) scale(1);      color: var(--cor-base); }
 }
 
 /* Fora da tela a animação para — não gasta bateria à toa. */
@@ -443,8 +482,12 @@ body {
 a.projeto__repo::after {
   content: " ↗";
   color: var(--cor-texto-4);
+  transition: color var(--duracao-hover) var(--curva-micro);
 }
 a.projeto__repo:hover { color: var(--cor-tinta); }
+
+.projeto:hover a.projeto__repo::after,
+.projeto:focus-within a.projeto__repo::after { color: var(--accent); }
 
 /* Sem link: o texto explica a ausência em vez de deixar um buraco. */
 .projeto__repo--privado { color: var(--cor-texto-4); }
@@ -487,6 +530,17 @@ a.projeto__repo:hover { color: var(--cor-tinta); }
 }
 .projeto:hover .projeto__acao,
 .projeto:focus-within .projeto__acao { color: var(--cor-tinta); }
+
+/* A seta vem do CSS, não do texto: é sinalização, não conteúdo. */
+.projeto__acao::after {
+  content: " →";
+  color: var(--cor-texto-4);
+  transition: color var(--duracao-hover) var(--curva-micro);
+}
+
+/* Único momento em que o acento toca o card. Fora do hover, cinza. */
+.projeto:hover .projeto__acao::after,
+.projeto:focus-within .projeto__acao::after { color: var(--accent); }
 
 
 /* ---- O palco (base comum aos três) ---- */

@@ -147,6 +147,7 @@ Vá até a seção numerada dos palcos no `styles.css` (bloco 9 em diante), acre
 Vocabulário permitido — **nada de valor cru**:
 
 - Cor: `--cor-fundo`, `--cor-fundo-2`, `--cor-tinta`, `--cor-texto-2`, `--cor-texto-3`, `--cor-texto-4`, `--cor-linha`. Nenhum hex fora do bloco de tokens. É o que faz o tema claro funcionar sem tocar em regra de componente.
+- **`--accent` é proibido dentro do palco.** O acento violeta tem três aparições na página inteira (pipeline do hero, setas do card no hover, ponto do botão de tema) e a graça é essa escassez. Palco é cinza.
 - Texto do palco: `--passo-micro`, família `--fonte-mono` (já herdadas de `.palco`).
 - Curvas e espaços: `--curva-entrada`, `--curva-micro`, `--espaco-*`.
 - `border-radius: 0` em tudo.
