@@ -9,9 +9,9 @@
     <meta name="description"
         content="Portfólio de Ramon Dantas Policarpo, desenvolvedor back-end com foco em Java e Spring Boot.">
 
-    <!-- Cor da barra do navegador no mobile, acompanhando o tema. -->
-    <meta name="theme-color" content="#0f0f0f" media="(prefers-color-scheme: dark)">
-    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+    <!-- Cor da barra do navegador no mobile. Sem media=, porque quem manda no
+         tema é o botão: o script reescreve este content a cada troca. -->
+    <meta name="theme-color" content="#0f0f0f" id="cor-barra">
 
     <!-- Inter (corpo e nome) + JetBrains Mono (rótulos e dados) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -20,12 +20,42 @@
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;500&display=swap">
 
     <link rel="stylesheet" href="styles.css">
+
+    <!--
+        Este script precisa rodar ANTES da primeira pintura, por isso está aqui
+        no <head> e não no script.js. Ele decide o tema; se rodasse no fim do
+        <body>, quem prefere claro veria a página piscar escura primeiro.
+
+        Faz duas coisas:
+        1. data-tema no <html> — a escolha salva, ou a preferência do sistema.
+        2. classe .js — o CSS usa para só esconder o conteúdo do reveal quando
+           existe JavaScript para revelá-lo depois.
+    -->
+    <script>
+        (function () {
+            var raiz = document.documentElement;
+            raiz.classList.add('js');
+
+            var salvo = null;
+            // localStorage pode lançar em file:// ou em modo restrito.
+            try { salvo = localStorage.getItem('tema'); } catch (e) { }
+
+            raiz.dataset.tema = salvo ||
+                (window.matchMedia('(prefers-color-scheme: light)').matches ? 'claro' : 'escuro');
+        })();
+    </script>
 </head>
 
 <body>
 
     <!-- Atalho de acessibilidade: primeiro item alcançável pelo teclado. -->
     <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+
+    <!-- Alternador de tema. O rótulo mostra o tema ATIVO; o aria-label diz o
+         que o clique faz. Ambos são reescritos pelo script. -->
+    <button class="tema" type="button" id="tema" aria-label="Tema escuro. Alternar para o tema claro.">
+        <span class="tema__rotulo" id="tema-rotulo">escuro</span>
+    </button>
 
     <main id="conteudo" class="pagina">
 
@@ -333,6 +363,9 @@
             <li><a class="rodape__link" href="https://linkedin.com/in/ramondantaspolicarpo" rel="me noopener"
                     target="_blank">LinkedIn</a></li>
             <li><a class="rodape__link" href="mailto:ramonpolicarpo36@gmail.com">ramonpolicarpo36@gmail.com</a></li>
+            <!-- Coloque o arquivo em assets/ com exatamente este nome. -->
+            <li><a class="rodape__link" href="assets/curriculo-ramon-dantas-policarpo.pdf" download>Currículo (PDF)</a>
+            </li>
         </ul>
     </footer>
 

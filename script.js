@@ -9,6 +9,7 @@
      4. Revelar ....... fade + subida ao rolar a página
      5. Palcos ........ liga a micro-animação de cada card de projeto
      6. Pipeline ...... para a animação do hero quando ela sai da tela
+     6-B. Tema ........ o clique do alternador (a ESCOLHA é feita no <head>)
      7. Embaralhar .... efeito no nome, no hover
      8. Início
 
@@ -465,6 +466,56 @@
 
 
     /* ================================================================== *
+       6-B. ALTERNADOR DE TEMA
+
+       Quem ESCOLHE o tema é o script do <head> — ele roda antes da primeira
+       pintura para a página não piscar no tema errado. Aqui só tratamos o
+       clique e mantemos os rótulos em dia.
+
+       Uma vez que o visitante clica, a escolha dele passa a valer sobre a
+       preferência do sistema, e fica salva entre visitas.
+     * ================================================================== */
+    function iniciarTema() {
+        var botao = document.getElementById('tema');
+        var rotulo = document.getElementById('tema-rotulo');
+        if (!botao || !rotulo) return;
+
+        var raiz = document.documentElement;
+        var corBarra = document.getElementById('cor-barra');
+
+        function atualizarRotulos() {
+            var claro = raiz.dataset.tema === 'claro';
+
+            // O rótulo mostra o tema ativo; o aria-label diz o que o clique faz.
+            rotulo.textContent = claro ? 'claro' : 'escuro';
+            botao.setAttribute(
+                'aria-label',
+                claro
+                    ? 'Tema claro. Alternar para o tema escuro.'
+                    : 'Tema escuro. Alternar para o tema claro.'
+            );
+
+            // A barra do navegador no mobile acompanha a troca.
+            // Estes dois valores são --cor-fundo de cada tema.
+            if (corBarra) corBarra.content = claro ? '#ffffff' : '#0f0f0f';
+        }
+
+        botao.addEventListener('click', function () {
+            var novo = raiz.dataset.tema === 'claro' ? 'escuro' : 'claro';
+            raiz.dataset.tema = novo;
+
+            // localStorage pode lançar em file:// ou em modo restrito: o tema
+            // troca de qualquer jeito, só não sobrevive ao recarregar.
+            try { localStorage.setItem('tema', novo); } catch (e) { }
+
+            atualizarRotulos();
+        });
+
+        atualizarRotulos();
+    }
+
+
+    /* ================================================================== *
        7. EMBARALHAR O NOME (hover no hero)
        As letras trocam por caracteres aleatórios e assentam da esquerda
        para a direita em 450ms. Dispara uma vez por hover.
@@ -536,5 +587,6 @@
     iniciarRevelacao();
     iniciarPalcos();
     iniciarPipeline();
+    iniciarTema();
     iniciarEmbaralhamento();
 })();

@@ -39,8 +39,12 @@
   color-scheme: dark;
 
   /* Cor — preto, branco e cinzas. Sem cor de destaque.
-     O tema escuro é o padrão; o claro está logo abaixo, no bloco de
-     prefers-color-scheme, e é a inversão exata destes valores. */
+     O escuro é o padrão; o claro é a inversão exata, logo abaixo.
+
+     Repare que NÃO existe @media (prefers-color-scheme) aqui. A preferência
+     do sistema é lida uma vez pelo script do <head>, que escreve data-tema
+     no <html>. Assim existe um caminho só para o tema — o botão sobrepõe o
+     sistema sem disputa de especificidade, e cada paleta mora num lugar só. */
   --cor-fundo: #0f0f0f;
   --cor-fundo-2: #171717;   /* preenchimento discreto (hover de card) */
   --cor-tinta: #f2f2f2;     /* texto principal */
@@ -93,23 +97,20 @@
 }
 
 /*
-   Tema claro: entra só para quem configurou "claro" no sistema. São os
-   mesmos tons do currículo, invertidos. Nenhuma outra regra do arquivo
-   precisa saber qual tema está ativo — todas usam as variáveis acima.
+   Tema claro: os mesmos tons do currículo, invertidos. Nenhuma outra regra
+   do arquivo precisa saber qual tema está ativo — todas usam as variáveis.
 */
-@media (prefers-color-scheme: light) {
-  :root {
-    color-scheme: light;
+:root[data-tema="claro"] {
+  color-scheme: light;
 
-    --cor-fundo: #ffffff;
-    --cor-fundo-2: #fafafa;
-    --cor-tinta: #111111;
-    --cor-texto-2: #333333;
-    --cor-texto-3: #6b6b6b;
-    --cor-texto-4: #9a9a9a;
-    --cor-linha: #e3e3e3;
-    --cor-veu: rgba(17, 17, 17, 0.55);
-  }
+  --cor-fundo: #ffffff;
+  --cor-fundo-2: #fafafa;
+  --cor-tinta: #111111;
+  --cor-texto-2: #333333;
+  --cor-texto-3: #6b6b6b;
+  --cor-texto-4: #9a9a9a;
+  --cor-linha: #e3e3e3;
+  --cor-veu: rgba(17, 17, 17, 0.55);
 }
 
 
@@ -177,6 +178,51 @@ body {
 }
 
 
+/* ---- Alternador de tema ----
+   Fixo no canto, discreto. Mostra o tema ATIVO, como um rótulo de estado —
+   mesmo vocabulário dos rótulos em mono do resto da página. */
+.tema {
+  position: fixed;
+  top: var(--espaco-3);
+  right: var(--espaco-3);
+  z-index: 5;
+
+  appearance: none;
+  padding: 0.3rem 0.6rem;
+  background: var(--cor-fundo);
+  border: 1px solid var(--cor-linha);
+  border-radius: 0;
+  color: var(--cor-texto-3);
+  font-family: var(--fonte-mono);
+  font-size: var(--passo-mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+
+  transition:
+    color var(--duracao-hover) var(--curva-micro),
+    border-color var(--duracao-hover) var(--curva-micro);
+}
+.tema:hover {
+  color: var(--cor-tinta);
+  border-color: var(--cor-texto-3);
+}
+
+/* O ponto antes do rótulo: cheio no escuro, vazado no claro. */
+.tema__rotulo::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-right: 0.45rem;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  background: currentColor;
+  vertical-align: baseline;
+}
+:root[data-tema="claro"] .tema__rotulo::before { background: none; }
+
+
 /* ------------------------------------------------------------------ *
    4. LAYOUT DAS SEÇÕES
    Cada seção é uma grade de duas colunas: o rótulo em mono vive na calha
@@ -213,8 +259,9 @@ body {
 /* ------------------------------------------------------------------ *
    5. HERO
  * ------------------------------------------------------------------ */
+/* O piso do padding de cima deixa espaço para o botão de tema, que é fixo. */
 .hero {
-  padding-block: clamp(var(--espaco-6), 9vh, 5rem) var(--espaco-8);
+  padding-block: clamp(var(--espaco-7), 9vh, 5rem) var(--espaco-8);
 }
 
 .hero__nome {
@@ -982,7 +1029,10 @@ a.projeto__repo:hover { color: var(--cor-tinta); }
    14. REVELAR AO ROLAR
    Fade + subida de 10px. O atraso do stagger vem do script, na --atraso.
  * ------------------------------------------------------------------ */
-.revelar {
+/* O .js vem do script do <head>. Sem ele o conteúdo nunca seria revelado e
+   a página ficaria em branco — então quem está sem JavaScript vê tudo, só
+   sem a animação de entrada. */
+.js .revelar {
   opacity: 0;
   transform: translateY(10px);
   transition:
