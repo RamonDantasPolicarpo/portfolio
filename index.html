@@ -14,10 +14,15 @@
     <meta name="theme-color" content="#0f0f0f" id="cor-barra">
 
     <!-- Ícones. O SVG é o principal (escala em qualquer tamanho); o PNG de 32
-         atende navegador que não lê SVG, e o apple-touch vira atalho no iOS. -->
-    <link rel="icon" href="favicon.svg" type="image/svg+xml">
-    <link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
-    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+         atende navegador que não lê SVG, e o apple-touch vira atalho no iOS.
+         Estes três moram em assets/ porque só são achados por estas linhas.
+
+         O favicon.ico é o único que fica na RAIZ, e não é escolha estética:
+         navegador e bot que não leem o HTML pedem /favicon.ico direto. Ele
+         não precisa de <link> — é procurado por convenção. -->
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+    <link rel="icon" href="assets/favicon-32.png" sizes="32x32" type="image/png">
+    <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 
     <!-- ==================================================================
          PREVIEW DE LINK (WhatsApp, LinkedIn, Slack, X)
@@ -37,7 +42,7 @@
     <!-- [URL] -->
     <meta property="og:url" content="https://ramondantaspolicarpo.github.io/portifolio/">
     <!-- [URL] -->
-    <meta property="og:image" content="https://ramondantaspolicarpo.github.io/portifolio/og-image.png">
+    <meta property="og:image" content="https://ramondantaspolicarpo.github.io/portifolio/assets/og-image.png">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta property="og:image:alt" content="Ramon Dantas Policarpo, desenvolvedor back-end.">
@@ -48,7 +53,7 @@
     <meta name="twitter:description"
         content="APIs REST em Java e Spring Boot. Hoje construo o Apoli, um CRM multi-tenant para corretoras de seguros.">
     <!-- [URL] -->
-    <meta name="twitter:image" content="https://ramondantaspolicarpo.github.io/portifolio/og-image.png">
+    <meta name="twitter:image" content="https://ramondantaspolicarpo.github.io/portifolio/assets/og-image.png">
 
     <!-- Inter (corpo e nome) + JetBrains Mono (rótulos e dados) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
