@@ -48,10 +48,15 @@
             video: null, // TROQUE POR: 'assets/video/apoli.mp4'
             texto: [
                 '## Problema',
-                'Corretora de seguros perde dinheiro de três formas silenciosas: contrato que vence',
-                'sem ninguém perceber, hora gasta digitando dado que já existe no PDF da proposta,',
-                'e histórico do cliente espalhado entre planilha, e-mail e pasta de arquivo.',
-                'O Apoli ataca as três com uma base única por corretora.',
+                'Minha tia é corretora de seguros, e a rotina dela perdia dinheiro de três formas',
+                'silenciosas: contrato vencendo sem ninguém perceber, hora gasta digitando dado que',
+                'já existe no PDF da proposta, e histórico do cliente espalhado entre planilha,',
+                'e-mail e pasta de arquivo.',
+                '',
+                'Comecei resolvendo o problema dela. Ao ver que a mesma dor não é exclusiva de uma',
+                'corretora, construí **multi-tenant desde o primeiro dia** em vez de fazer um sistema',
+                'de usuário único e ter que reescrever depois — decisão de arquitetura que só é barata',
+                'no começo.',
                 '',
                 '## Isolamento entre corretoras, em três camadas',
                 'Multi-tenancy não é uma coluna `corretora_id` no `WHERE` e torcer para não esquecer:',
@@ -77,6 +82,10 @@
                 'busca por id, update e inativação. O isolamento é uma afirmação testada, não um comentário.',
                 '',
                 '## Estado',
+                'O MVP está indo para produção agora, para a corretora começar a usar de verdade',
+                'enquanto eu fecho as features que faltam. Ainda não tenho número de impacto para',
+                'mostrar — vou ter quando o uso real gerar o primeiro ciclo de feedback.',
+                '',
                 '**Pronto:** autenticação, onboarding com aprovação de vínculo, CRUD multi-tenant de clientes,',
                 'veículos e apólices, motor de PDF, importação completa (PDF alimentando cliente + veículo +',
                 'apólice) e painel de vigências a vencer.',
@@ -106,8 +115,11 @@
                 '## Resultado',
                 'Clona, roda um comando e a API sobe documentada e navegável no Swagger UI.',
                 '',
-                '[PREENCHER] Uma frase sobre o que você faria diferente hoje — é o que mais',
-                'impressiona quem lê, porque mostra que você olhou o próprio código depois.'
+                '## O que eu faria diferente hoje',
+                'Três coisas, e todas apareceram depois que eu trabalhei em projeto maior:',
+                '- **Spring Security desde o começo.** A API hoje não autentica ninguém — qualquer um fecha pedido em nome de qualquer cliente. Num exercício de OO isso não foi cobrado, mas é a primeira coisa que eu adicionaria.',
+                '- **Roles por tipo de usuário.** Cliente e administrador têm poderes muito diferentes sobre pedido e estoque, e o código trata os dois como a mesma coisa.',
+                '- **Lombok.** Muita classe do projeto é getter, setter e construtor escritos à mão. Aprendi isso no projeto seguinte e a diferença no que sobra para ler é grande.'
             ].join('\n')
         },
 
@@ -165,11 +177,19 @@
                 'e sem depender de rede. Testar integração com LLM de verdade seria lento, caro e não',
                 'determinístico — o que precisa de teste é o meu código em volta da resposta, não o modelo.',
                 '',
+                '## O prompt foi a parte difícil',
+                'Integrar o LLM foi mais simples do que eu esperava — o Spring AI resolve a chamada',
+                'e a serialização, e o Google AI Studio deixa testar antes de escrever código. O que',
+                'me custou tempo foi **construir um prompt que devolvesse sempre o formato que o',
+                'código precisava consumir**. Uma resposta bem escrita mas fora do formato quebra a',
+                'aplicação igual a uma resposta errada, e essa foi a lição que eu não esperava levar.',
+                '',
                 '## Resultado',
                 'Distribuído de três formas — executável, código-fonte e Docker — com pipeline no',
-                'GitHub Actions e Checkstyle rodando no CI.',
-                '',
-                '[PREENCHER] Uma frase sobre o que você aprendeu integrando um LLM num projeto Java.'
+                'GitHub Actions e Checkstyle rodando no CI. É o projeto que me deu mais satisfação',
+                'de ver rodando: a distância entre "descrevi meu lixo em português" e "recebi a',
+                'classificação e como embalar" é curta o suficiente para parecer mágica, e eu sei',
+                'exatamente onde está cada peça.'
             ].join('\n')
         }
 
