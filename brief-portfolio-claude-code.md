@@ -16,7 +16,9 @@ No Claude Code, rode:
 
 > Se der "marketplace not found", rode `/plugin marketplace update claude-plugins-official` e tente o install de novo. Essa skill é oficial da Anthropic — ela já cuida de animação, então não precisa de nenhuma skill extra.
 
----
+/plugin marketplace add anthropics/claude-plugins-official
+/plugin install frontend-design@claude-plugins-official
+/reload-plugins---
 
 ## 2. Montar o projeto
 
