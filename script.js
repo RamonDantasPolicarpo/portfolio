@@ -44,6 +44,7 @@
         'saas-apolices': {
             categoria: 'SaaS · Multitenant',
             titulo: 'Apoli',
+            repo: null, // repositório privado
             video: null, // TROQUE POR: 'assets/video/apoli.mp4'
             texto: [
                 '## Problema',
@@ -87,6 +88,7 @@
         'byteshop': {
             categoria: 'API REST · E-commerce',
             titulo: 'ByteShop API',
+            repo: 'https://github.com/RamonDantasPolicarpo/byteshop-api',
             video: null, // TROQUE POR: 'assets/video/byteshop.mp4'
             texto: [
                 '## Problema',
@@ -112,6 +114,7 @@
         'ponto-notes': {
             categoria: 'Full-stack · Estudo',
             titulo: 'Ponto-Notes',
+            repo: 'https://github.com/RamonDantasPolicarpo/ponto-notes-api',
             video: null, // TROQUE POR: 'assets/video/ponto-notes.mp4'
             texto: [
                 '## Problema',
@@ -135,6 +138,7 @@
         'eco-descart': {
             categoria: 'CLI · Spring AI',
             titulo: 'EcoDescart',
+            repo: 'https://github.com/RamonDantasPolicarpo/eco-descart',
             video: null, // TROQUE POR: 'assets/video/eco-descart.mp4'
             texto: [
                 '## Problema',
@@ -257,9 +261,24 @@
 
         var elCategoria = document.getElementById('caso-categoria');
         var elTitulo = document.getElementById('caso-titulo');
+        var elRepo = document.getElementById('caso-repo');
         var elMidia = document.getElementById('caso-midia');
         var elTexto = document.getElementById('caso-texto');
         var botaoFechar = document.getElementById('caso-fechar');
+
+        /** Monta o link do repositório, ou deixa vazio se o projeto é privado. */
+        function montarRepo(caso) {
+            if (!caso.repo) { elRepo.textContent = ''; return; }
+
+            var link = document.createElement('a');
+            link.href = caso.repo;
+            link.target = '_blank';
+            link.rel = 'noopener';
+            link.textContent = 'Ver código no GitHub ↗';
+
+            elRepo.textContent = '';
+            elRepo.appendChild(link);
+        }
 
         function montarMidia(caso) {
             if (!caso.video) {
@@ -283,6 +302,7 @@
             elCategoria.textContent = caso.categoria;
             elTitulo.textContent = caso.titulo;
             elTexto.innerHTML = paraHTML(caso.texto);
+            montarRepo(caso);
             montarMidia(caso);
 
             modal.showModal();
@@ -386,8 +406,12 @@
 
             card.addEventListener('mouseenter', ligar);
             card.addEventListener('mouseleave', desligar);
-            card.addEventListener('focus', ligar);
-            card.addEventListener('blur', desligar);
+
+            // focusin/focusout em vez de focus/blur: o card tem dois focáveis
+            // dentro (o botão e o link do repositório) e só estes dois eventos
+            // sobem dos filhos até aqui.
+            card.addEventListener('focusin', ligar);
+            card.addEventListener('focusout', desligar);
         });
     }
 

@@ -152,8 +152,8 @@
                 <ul class="projetos">
 
                     <!-- ---------- Projeto 1: Apoli ---------- -->
-                    <li class="revelar">
-                        <button class="projeto" type="button" data-projeto="saas-apolices">
+                    <li class="projeto revelar">
+                        <button class="projeto__corpo" type="button" data-projeto="saas-apolices">
                             <span class="projeto__topo">
                                 <span class="projeto__categoria">SaaS · Multitenant</span>
                                 <span class="projeto__periodo">2025 —</span>
@@ -190,11 +190,13 @@
 
                             <span class="projeto__acao">Ver estudo de caso</span>
                         </button>
+
+                        <span class="projeto__repo projeto__repo--privado">Repositório privado</span>
                     </li>
 
                     <!-- ---------- Projeto 2: ByteShop API ---------- -->
-                    <li class="revelar">
-                        <button class="projeto" type="button" data-projeto="byteshop">
+                    <li class="projeto revelar">
+                        <button class="projeto__corpo" type="button" data-projeto="byteshop">
                             <span class="projeto__topo">
                                 <span class="projeto__categoria">API REST · E-commerce</span>
                                 <span class="projeto__periodo">2025 — 26</span>
@@ -218,11 +220,15 @@
 
                             <span class="projeto__acao">Ver estudo de caso</span>
                         </button>
+
+                        <a class="projeto__repo" href="https://github.com/RamonDantasPolicarpo/byteshop-api" target="_blank" rel="noopener">
+                            Ver código no GitHub
+                        </a>
                     </li>
 
                     <!-- ---------- Projeto 3: Ponto-Notes ---------- -->
-                    <li class="revelar">
-                        <button class="projeto" type="button" data-projeto="ponto-notes">
+                    <li class="projeto revelar">
+                        <button class="projeto__corpo" type="button" data-projeto="ponto-notes">
                             <span class="projeto__topo">
                                 <span class="projeto__categoria">Full-stack · Estudo</span>
                                 <span class="projeto__periodo">2026</span>
@@ -254,11 +260,15 @@
 
                             <span class="projeto__acao">Ver estudo de caso</span>
                         </button>
+
+                        <a class="projeto__repo" href="https://github.com/RamonDantasPolicarpo/ponto-notes-api" target="_blank" rel="noopener">
+                            Ver código no GitHub
+                        </a>
                     </li>
 
                     <!-- ---------- Projeto 4: EcoDescart ---------- -->
-                    <li class="revelar">
-                        <button class="projeto" type="button" data-projeto="eco-descart">
+                    <li class="projeto revelar">
+                        <button class="projeto__corpo" type="button" data-projeto="eco-descart">
                             <span class="projeto__topo">
                                 <span class="projeto__categoria">CLI · Spring AI</span>
                                 <span class="projeto__periodo">2026</span>
@@ -287,6 +297,10 @@
 
                             <span class="projeto__acao">Ver estudo de caso</span>
                         </button>
+
+                        <a class="projeto__repo" href="https://github.com/RamonDantasPolicarpo/eco-descart" target="_blank" rel="noopener">
+                            Ver código no GitHub
+                        </a>
                     </li>
 
                 </ul>
@@ -326,6 +340,9 @@
         </div>
 
         <h2 class="caso__titulo" id="caso-titulo"></h2>
+
+        <!-- Link do repositório. O script esconde quando o projeto é privado. -->
+        <p class="caso__repo" id="caso-repo"></p>
 
         <!-- Vídeo de demonstração (ou o aviso de "em breve"). -->
         <div class="caso__midia" id="caso-midia"></div>
