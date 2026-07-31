@@ -1090,7 +1090,9 @@ a.projeto__repo:hover { color: var(--cor-tinta); }
 
   html { scroll-behavior: auto; }
 
-  .revelar {
+  /* Precisa do .js na frente para empatar em especificidade com a regra
+     da seção 14 e vencer por vir depois. */
+  .js .revelar {
     opacity: 1;
     transform: none;
   }
