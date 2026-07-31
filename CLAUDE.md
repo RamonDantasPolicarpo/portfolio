@@ -43,8 +43,7 @@ If you add tooling, the "zero build dependency" constraint below has to be recon
 - `.term__requisicao` in the ByteShop palco hardcodes the character count twice: `width: 16ch` and `steps(16)`. Changing the command text means changing both.
 - `assets/favicon.svg` is the source of truth for the icon; `assets/favicon-32.png`, `assets/apple-touch-icon.png`, `assets/og-image.png` and root `favicon.ico` were rendered from it (and from the hero layout) by a one-off Pillow script. Change the SVG and the rest go stale — regenerate rather than hand-editing them.
 - **`favicon.ico` is the one icon that must stay at the repo root**, and it has no `<link>` on purpose: browsers and non-HTML-parsing bots probe `/favicon.ico` by convention. Everything else is found only through its `<link>`/`<meta>`, so it lives in `assets/`.
-- **The Open Graph URLs in `<head>` are absolute and still point at a repo that does not exist yet.** Three lines are tagged `[URL]`; they must all change when the GitHub repo is named. Relative paths do not work for link previews.
-- Directory name is `portifolio` (typo pre-existing). The local folder name does not affect the published URL — only the GitHub repo name does, and that is still undecided.
+- **The local folder is `portifolio` (typo) but the GitHub repo and published site are `portfolio` (correct).** Live at `https://ramondantaspolicarpo.github.io/portfolio/`. This mismatch already caused one bug: `og:image` and `twitter:image` kept the typo'd path while `og:url` was fixed, so WhatsApp fetched a 404 and rendered no preview. **If the site address ever changes, all three absolute URLs in `<head>` must change together** — one pointing elsewhere breaks the whole preview. Relative paths do not work for link previews.
 - Default branch here is `master`, while PRs generally target `main`.
 
 ## Adding or changing a project
